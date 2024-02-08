@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BepInEx.Logging;
+using System;
 
 namespace Utilla
 {
@@ -14,7 +15,7 @@ namespace Utilla
 				}
 				catch (Exception ex)
 				{
-					UnityEngine.Debug.LogError(ex);
+					Utilla.Log(ex, LogLevel.Error);
 				}
 			}
 		}
@@ -29,7 +30,7 @@ namespace Utilla
 				}
 				catch (Exception ex)
 				{
-					UnityEngine.Debug.LogError(ex);
+					Utilla.Log(ex, LogLevel.Error);
 				}
 			}
 		}

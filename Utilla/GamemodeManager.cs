@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using Photon.Pun;
 using Utilla.Models;
 using HarmonyLib;
+using BepInEx.Logging;
 
 namespace Utilla
 {
@@ -108,7 +109,7 @@ namespace Utilla
 			}
 			catch (Exception e)
 			{
-				Debug.LogError($"Utilla: Failed to initialize {name}: {e}");
+				Utilla.Log($"Utilla: Failed to initialize {name}: {e}", LogLevel.Error);
 			}
 
 		}
@@ -262,7 +263,7 @@ namespace Utilla
 					}
 					catch (Exception e)
 					{
-						Debug.LogError(e);
+						Utilla.Log(e, LogLevel.Error);
 					}
 				}
 			}
@@ -282,7 +283,7 @@ namespace Utilla
 					}
 					catch (Exception e)
 					{
-						Debug.LogError(e);
+						Utilla.Log(e, LogLevel.Error);
 					}
 				}
 			}

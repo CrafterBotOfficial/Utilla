@@ -153,7 +153,7 @@ namespace Utilla.HarmonyPatches
 					// These code paths do different things, don't alter them
 					if (___joiningWithFriend || !___pastFirstConnection) return true;
 
-					Debug.Log("attempt to join master and join a random room");
+					Utilla.Log("attempt to join master and join a random room");
 
 					// Ignore used reigons
 					int[] playersInRegion = (int[])___playersInRegion.Clone();
@@ -177,7 +177,7 @@ namespace Utilla.HarmonyPatches
 						num2 += (float)playersInRegion[num3] / (float)num;
 					}
 					PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = __instance.serverRegions[num3];
-					Debug.Log("joining past the first room, so we weighted randomly picked " + __instance.serverRegions[num3]);
+					Utilla.Log("joining past the first room, so we weighted randomly picked " + __instance.serverRegions[num3]);
 					// End of lemming's code
 
 					// For some reason the first time this is called it just runs again, so don't ignore the region we just chose

@@ -51,7 +51,7 @@ namespace Utilla.Utils
 			RoomCode = code;
 			__instance.customRoomID = code;
 			__instance.isPrivate = true;
-			Debug.Log("attempting to connect");
+			Utilla.Log("attempting to connect");
 			__instance.AttemptToJoinSpecificRoom(code);
 
 			if (casual)
@@ -93,7 +93,7 @@ namespace Utilla.Utils
 				string customRoomID = photonNetworkController.customRoomID;
 				if (!customRoomID.Contains("_MAP"))
 				{
-					Debug.Log("JOINING");
+					Utilla.Log("JOINING");
 					JoinPrivateLobby(customRoomID + "_MAP", casual);
 					return;
 				}
