@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Reflection;
 
 namespace Utilla.HarmonyPatches
@@ -13,16 +14,20 @@ namespace Utilla.HarmonyPatches
         public static bool IsPatched { get; private set; }
         public const string InstanceId = "com.legoandmars.gorillatag.utilla";
 
+        static UtillaPatches()
+        {
+            instance = new Harmony(InstanceId);
+            instance.PatchAll(typeof(HarmonyPatches.GameModePatches));
+        }
+
         internal static void ApplyHarmonyPatches()
         {
             if (!IsPatched)
             {
-                if (instance == null)
-                {
-                    instance = new Harmony(InstanceId);
-                }
-
-                instance.PatchAll(Assembly.GetExecutingAssembly());
+                MethodBase getGameModeInstance = typeof(GameMode).GetMethod("GetGameModeInstance", 0, new Type[] { typeof(GameModeType) });
+                instance.Patch(getGameModeInstance, postfix: new HarmonyMethod(typeof(GameModePatches), "GetGameModeInstance_Postfix"));
+                
+                instance.PatchAll();
                 IsPatched = true;
             }
         }
