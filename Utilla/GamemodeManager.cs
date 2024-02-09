@@ -1,13 +1,13 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using GorillaNetworking;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utilla.Models;
 
 namespace Utilla
@@ -51,35 +51,49 @@ namespace Utilla
             Gamemodes.AddRange(GetGamemodes(pluginInfos));
             Gamemodes.ForEach(AddGamemodeToManagerPool);
 
-            ZoneManagement zoneManager = FindObjectOfType<ZoneManagement>();
-
-            ZoneData FindZoneData(GTZone zone)
-                => (ZoneData)AccessTools.Method(typeof(ZoneManagement), "GetZoneData").Invoke(zoneManager, new object[] { zone });
+            SceneManager.sceneLoaded += SceneLoaded;
 
             InitializeSelector("TreehouseSelector",
-                FindZoneData(GTZone.forest).rootGameObjects[2].transform.Find("TreeRoomInteractables/UI"),
-                "Selector Buttons/anchor",
-                "Selector Buttons/anchor"
-            );
-            InitializeSelector("MountainSelector",
-                FindZoneData(GTZone.mountain).rootGameObjects[1].transform,
-                "Geometry/goodigloo/modeselectbox (1)/anchor",
-                "UI/Text"
-            );
-            InitializeSelector("SkySelector",
-                FindZoneData(GTZone.skyJungle).rootGameObjects[1].transform.Find("UI/-- Clouds ModeSelectBox UI --/"),
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons").transform,
                 "anchor",
-                "ModeSelectorText"
-            );
-            InitializeSelector("BeachSelector",
-                FindZoneData(GTZone.beach).rootGameObjects[0].transform.Find("BeachComputer"),
-                "modeselectbox (3)/anchor/",
-                "UI FOR BEACH COMPUTER"
-            );
+                "anchor"
+                );
+        }
+
+        private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            switch (arg0.name)
+            {
+                case "Skyjungle":
+                    InitializeSelector("SkySelector",
+                        GameObject.Find("skyjungle/UI/-- Clouds ModeSelectBox UI --").transform,
+                        "anchor",
+                        "ModeSelectorText"
+                    );
+                    break;
+                case "Mountain":
+                    InitializeSelector("MountainSelector",
+                            GameObject.Find("Mountain").transform,
+                            "Geometry/goodigloo/modeselectbox (1)/anchor",
+                            "UI/Text"
+                        );
+                    break;
+                case "Beach":
+                    InitializeSelector("BeachSelector",
+                        GameObject.Find("Beach/BeachComputer").transform,
+                        "modeselectbox (3)/anchor",
+                        "UI FOR BEACH COMPUTER"
+                    );
+                    break;
+                default:
+                    Utilla.Log($"Unknown scene was loaded {arg0.name}", LogLevel.Warning);
+                    break;
+            }
         }
 
         void InitializeSelector(string name, Transform parent, string buttonPath, string gamemodesPath)
         {
+            Utilla.Log($"Initializing selector {name}");
             try
             {
                 var selector = new GameObject(name).AddComponent<GamemodeSelector>();
@@ -229,7 +243,7 @@ namespace Utilla
             int gameManagerTypeNumber = GameMode.gameModes.Count;
             string gameManagerName = gamemode.ID;
 
-            if (GameMode.gameModeNames.Contains(gameManagerName)) 
+            if (GameMode.gameModeNames.Contains(gameManagerName))
             {
                 Utilla.Log($"Duplicate gamemodes found, please rename your gamemode to something unique. {gamemode.ID}", LogLevel.Error);
                 return;
