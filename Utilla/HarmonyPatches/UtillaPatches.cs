@@ -17,13 +17,14 @@ namespace Utilla.HarmonyPatches
         static UtillaPatches()
         {
             instance = new Harmony(InstanceId);
-            instance.PatchAll(typeof(HarmonyPatches.GameModePatches));
+            instance.PatchAll(typeof(HarmonyPatches.GameModePatches)); // Needs to be patched before the Awake method is called, however if everything is patched is completely breaks the game.
         }
 
         internal static void ApplyHarmonyPatches()
         {
             if (!IsPatched)
             {
+                // Manually patching since theres a overload generic method
                 MethodBase getGameModeInstance = typeof(GameMode).GetMethod("GetGameModeInstance", 0, new Type[] { typeof(GameModeType) });
                 instance.Patch(getGameModeInstance, postfix: new HarmonyMethod(typeof(GameModePatches), "GetGameModeInstance_Postfix"));
                 

@@ -33,6 +33,7 @@ namespace Utilla
         };
 
         List<PluginInfo> pluginInfos;
+        Transform gameManagerParent;
 
         void Start()
         {
@@ -42,10 +43,11 @@ namespace Utilla
 
             // transform.parent = GameObject.Find(UIRootPath).transform;
 
-            GorillaComputer.instance.currentGameMode = PlayerPrefs.GetString("currentGameMode", "INFECTION");
+            GorillaComputer.instance.currentGameMode.Value = PlayerPrefs.GetString("currentGameMode", "INFECTION");
 
             pluginInfos = GetPluginInfos();
 
+            gameManagerParent = GameObject.FindObjectOfType<GameMode>().transform;
             Gamemodes.AddRange(GetGamemodes(pluginInfos));
             Gamemodes.ForEach(AddGamemodeToManagerPool);
 
@@ -221,13 +223,20 @@ namespace Utilla
             Utilla.Log($"Adding {gamemode.ID} to gamemanager parent");
 
             GameObject managerObject = new GameObject(gamemode.ID);
-            managerObject.transform.parent = GameObject.FindObjectOfType<CasualGameMode>().transform;
+            managerObject.transform.parent = gameManagerParent;
             GorillaGameManager gameManager = managerObject.AddComponent(gamemode.GameManager) as GorillaGameManager;
 
-            int gameManagerNumber = GameMode.gameModes.Count;
-            string gameManagerName = gameManager.GameModeName();
-            GameMode.gameModeTable.Add(gameManagerNumber, gameManager);
-            GameMode.gameModeKeyByName.Add(gameManagerName, gameManagerNumber);
+            int gameManagerTypeNumber = GameMode.gameModes.Count;
+            string gameManagerName = gamemode.ID;
+
+            if (GameMode.gameModeNames.Contains(gameManagerName)) 
+            {
+                Utilla.Log($"Duplicate gamemodes found, please rename your gamemode to something unique. {gamemode.ID}", LogLevel.Error);
+                return;
+            }
+
+            GameMode.gameModeTable.Add(gameManagerTypeNumber, gameManager);
+            GameMode.gameModeKeyByName.Add(gameManagerName, gameManagerTypeNumber);
             GameMode.gameModes.Add(gameManager);
             GameMode.gameModeNames.Add(gameManagerName);
         }
@@ -235,17 +244,6 @@ namespace Utilla
         internal void OnRoomJoin(object sender, Events.RoomJoinedArgs args)
         {
             string gamemode = args.Gamemode;
-
-            /*if (PhotonNetwork.IsMasterClient)
-			{
-				foreach(Gamemode g in Gamemodes.Where(x => x.GameManager != null))
-				{
-					if (gamemode.Contains(g.ID))
-					{
-						break;
-					}
-				}
-			}*/
 
             foreach (var pluginInfo in pluginInfos)
             {

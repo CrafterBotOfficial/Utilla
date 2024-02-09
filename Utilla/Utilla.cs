@@ -42,7 +42,7 @@ namespace Utilla
 
         public static void Log(object message, LogLevel level = LogLevel.Info)
         {
-            instance?.Logger.Log(level, message);
+            instance?.Logger.Log(level, message); // Saves to the logoutput which makes it easier for ppl to debug
         }
     }
 }

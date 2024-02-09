@@ -17,7 +17,7 @@ namespace Utilla.HarmonyPatches
         }
 
         // GorillaGameManager GetGameModeInstance(GameModeType type)
-        public static void GetGameModeInstance_Postfix(GameModeType type, ref GorillaGameManager __result)
+        public static void GetGameModeInstance_Postfix(ref GorillaGameManager __result)
         {
             Utilla.Log($"Found {__result.GameModeName()}", BepInEx.Logging.LogLevel.Message);
             __result = GameMode.gameModes[GameModeSerializerPatch.GameType];
