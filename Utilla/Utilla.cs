@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utilla.HarmonyPatches;
 using Utilla.Utils;
 

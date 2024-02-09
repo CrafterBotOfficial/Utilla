@@ -38,6 +38,7 @@ namespace Utilla
         void Start()
         {
             Instance = this;
+
             Events.RoomJoined += OnRoomJoin;
             Events.RoomLeft += OnRoomLeft;
 
@@ -51,13 +52,13 @@ namespace Utilla
             Gamemodes.AddRange(GetGamemodes(pluginInfos));
             Gamemodes.ForEach(AddGamemodeToManagerPool);
 
-            SceneManager.sceneLoaded += SceneLoaded;
-
             InitializeSelector("TreehouseSelector",
                 GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons").transform,
                 "anchor",
                 "anchor"
                 );
+
+            SceneManager.sceneLoaded += SceneLoaded;
         }
 
         private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
@@ -126,7 +127,6 @@ namespace Utilla
             {
                 Utilla.Log($"Utilla: Failed to initialize {name}: {e}", LogLevel.Error);
             }
-
         }
 
         List<Gamemode> GetGamemodes(List<PluginInfo> infos)
